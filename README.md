@@ -1,2 +1,2 @@
 # pothen-esxes-gr
-PHP library for Pothen Esxes 
+PHP library for ΠΟΘΕΝ ΕΣΧΕΣ (Pothen Esxes)
