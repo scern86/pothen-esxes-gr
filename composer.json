@@ -1,0 +1,24 @@
+{
+    "name": "scern/pothen-esxes-gr",
+    "description": "PHP library for PothenEsxes",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "PothenEsxes\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dmitrii (Scern) Didenko",
+            "email": "scern86@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": "^7.8",
+        "symfony/http-foundation": "^7.0"
+    }
+}
