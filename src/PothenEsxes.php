@@ -20,7 +20,7 @@ class PothenEsxes{
     const XO_PI_STATUS_90_TEMPORARY_UNAVAILABLE = 90;
     const XO_PI_STATUS_99_SERVER_ERROR = 99;
 
-    /*Responses for getPothenData from KED*/
+    /* Responses for getPothenData from KED */
     const KED_STATUS_0_SUCCESS = 0;
     const KED_STATUS_1_ALREADY_RECEIVED = 1;
     const KED_STATUS_2_REQUEST_NOT_FOUND = 2;
@@ -32,20 +32,17 @@ class PothenEsxes{
         $this->currentEndpoint = $testMode ? self::TEST_ENDPOINT : self::PROD_ENDPOINT;
     }
 
-
-    /* Receive request from PothenEsxes */
-    /*public function getPothenAithma(): array
-    {
-        return [1,2,3];
-    }*/
-
     /* Answer to PothenEsxes */
-    public function responsePothenAithma(int $code): array
+    public function responsePothenAithma(int $code,?\DateTime $replyDate=null): array
     {
+        $data = [];
         if(in_array($code,[self::XO_PI_STATUS_0_SUCCESS,self::XO_PI_STATUS_1_ALREADY_RECEIVED])){
-            $replyDate = ['replyDate'=>date('Y-m-d')]; /* +1 workday 17:00 */
+            if(is_null($replyDate)){
+                $replyDate = ReplyDate::getNextBusinessDate();
+            }
+            $data['replyDate'] = $replyDate->format('Y-m-d\TH:i:s\Z');
         }
-        $outputRecord = $this->_createOutputRecord($code,$replyDate);
+        $outputRecord = $this->_createOutputRecord($code,$data);
 
         $result = [
             'sendPothenAithmaOutputRecord'=>$outputRecord,
@@ -57,23 +54,7 @@ class PothenEsxes{
         return $result;
     }
 
-    private function _createOutputRecord(int $code,array $data=[]): array
-    {
-        return [
-            'code'=>strval($code),
-            'message'=>$this->messages->getMessageByCode($code),
-            ...$data,
-        ];
-    }
 
-    private function _createErrorRecord(array $data=[]): array
-    {
-        return [];
-        /*return [
-            'errorCode'=>'GEN_COMMUNICATION_ERROR',
-            'errorDescr'=>'string'
-        ];*/
-    }
 
 
     /*Get encryption information to send a response*/
@@ -124,5 +105,23 @@ class PothenEsxes{
             $this->security->authorization->createAuthorizationHeader(),
             ...$headers
         ];
+    }
+
+    private function _createOutputRecord(int $code,array $data=[]): array
+    {
+        return [
+            'code'=>strval($code),
+            'message'=>$this->messages->getMessageByCode($code),
+            ...$data,
+        ];
+    }
+
+    private function _createErrorRecord(array $data=[]): array
+    {
+        return [];
+        /*return [
+            'errorCode'=>'GEN_COMMUNICATION_ERROR',
+            'errorDescr'=>'string'
+        ];*/
     }
 }
